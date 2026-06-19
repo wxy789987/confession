@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>写给可爱的你</title>
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -487,7 +489,7 @@
 
         <!-- 告白信卡片 -->
         <div class="letter-card" id="letterCard">
-            <img src="./告白信.png" alt="告白信" />
+            <img src="../告白信.png" alt="告白信" />
             <div class="letter-card-foot">
                 ✦ 一字一句，都是真心 ✦
             </div>
@@ -520,6 +522,33 @@
     <canvas id="confetti-canvas"></canvas>
 
     <script>
+        // ===== EmailJS 初始化 =====
+        // ⚠️ 以下几步需要你做：
+        //  1. 打开 https://www.emailjs.com 注册免费账号
+        //  2. 在 EmailJS 中创建一个 Email Service（连接你的 QQ 邮箱）
+        //  3. 创建一个 Email Template，模板内容写：
+        //        Subject: 💕 她同意了！！！
+        //        Body: 她刚刚点击了"好！我愿意"！快去确认吧！
+        //  4. 将下面的 publicKey / serviceID / templateID 替换成你自己的
+        emailjs.init('YOUR_PUBLIC_KEY'); // ← 替换为你的 EmailJS Public Key
+
+        const SERVICE_ID = 'YOUR_SERVICE_ID';   // ← 替换为你的 EmailJS Service ID
+        const TEMPLATE_ID = 'YOUR_TEMPLATE_ID'; // ← 替换为你的 EmailJS Template ID
+        const MY_EMAIL = '1730444948@qq.com';
+
+        function sendNotifyEmail() {
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+                to_email: MY_EMAIL,
+                reply_to: MY_EMAIL,
+                message: '她刚刚点击了「好！我愿意」❤️ 快去确认吧！',
+                date: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
+            }).then(() => {
+                console.log('✅ 通知邮件已发送');
+            }).catch((err) => {
+                console.error('❌ 邮件发送失败，请检查 EmailJS 配置:', err);
+            });
+        }
+
         // ===== 飘落的爱心 =====
         (function createHearts() {
             const container = document.getElementById('heartsContainer');
@@ -705,6 +734,8 @@
             msg.classList.add('show');
             startConfetti();
             stopConfettiAfter(6000);
+            // 发送通知邮件
+            sendNotifyEmail();
 
             // 隐藏"让我想想"按钮和回应
             btnMaybe.style.display = 'none';
