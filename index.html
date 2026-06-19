@@ -522,26 +522,36 @@
     <canvas id="confetti-canvas"></canvas>
 
     <script>
-        // ===== EmailJS 配置 =====
-        emailjs.init('oIfzrsZsNxcUuzWHc');
+        // ===== EmailJS 配置（若 CDN 加载失败不影响页面其他功能）=====
+        let sendNotifyEmail = function() {
+            console.log('⏳ EmailJS 未就绪，跳过邮件通知');
+        };
 
-        const SERVICE_ID = 'service_tf9rmmr';
-        const TEMPLATE_ID = 'template_nt4630o';
-        const MY_EMAIL = '1730444948@qq.com';
+        try {
+            if (typeof emailjs !== 'undefined') {
+                emailjs.init('oIfzrsZsNxcUuzWHc');
 
-        function sendNotifyEmail() {
-            const btnYes = document.getElementById('btnYes');
-            emailjs.send(SERVICE_ID, TEMPLATE_ID, {
-                to_email: MY_EMAIL,
-                from_name: '小沙同学',
-                message: '她刚刚点击了「好！我愿意」❤️ 快去确认吧！',
-                date: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
-            }).then(() => {
-                console.log('✅ 通知邮件已发送');
-            }).catch((err) => {
-                console.error('❌ 邮件发送失败:', err);
-                // 即使邮件失败也不影响用户操作，静默处理
-            });
+                const SERVICE_ID = 'service_tf9rmmr';
+                const TEMPLATE_ID = 'template_nt4630o';
+                const MY_EMAIL = '1730444948@qq.com';
+
+                sendNotifyEmail = function() {
+                    emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+                        to_email: MY_EMAIL,
+                        from_name: '小沙同学',
+                        message: '她刚刚点击了「好！我愿意」❤️ 快去确认吧！',
+                        date: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
+                    }).then(() => {
+                        console.log('✅ 通知邮件已发送');
+                    }).catch((err) => {
+                        console.error('❌ 邮件发送失败:', err);
+                    });
+                };
+            } else {
+                console.warn('⚠️ EmailJS 脚本未加载');
+            }
+        } catch(e) {
+            console.warn('⚠️ EmailJS 初始化失败，不影响页面功能:', e);
         }
 
         // ===== 飘落的爱心 =====
