@@ -522,18 +522,11 @@
     <canvas id="confetti-canvas"></canvas>
 
     <script>
-        // ===== EmailJS 初始化 =====
-        // ⚠️ 以下几步需要你做：
-        //  1. 打开 https://www.emailjs.com 注册免费账号
-        //  2. 在 EmailJS 中创建一个 Email Service（连接你的 QQ 邮箱）
-        //  3. 创建一个 Email Template，模板内容写：
-        //        Subject: 💕 她同意了！！！
-        //        Body: 她刚刚点击了"好！我愿意"！快去确认吧！
-        //  4. 将下面的 publicKey / serviceID / templateID 替换成你自己的
-        emailjs.init('YOUR_PUBLIC_KEY'); // ← 替换为你的 EmailJS Public Key
+        // ===== EmailJS 配置 =====
+        emailjs.init('oIfzrsZsNxcUuzWHc');
 
-        const SERVICE_ID = 'YOUR_SERVICE_ID';   // ← 替换为你的 EmailJS Service ID
-        const TEMPLATE_ID = 'YOUR_TEMPLATE_ID'; // ← 替换为你的 EmailJS Template ID
+        const SERVICE_ID = 'service_tf9rmmr';
+        const TEMPLATE_ID = 'template_nt4630o';
         const MY_EMAIL = '1730444948@qq.com';
 
         function sendNotifyEmail() {
