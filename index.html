@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>写给可爱的你</title>
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+            background: #fff8f5;
+            color: #4a3728;
+            overflow-x: hidden;
+        }
+
+        /* ===== 首页 ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(160deg, #fff8f5 0%, #ffe8e0 40%, #ffd9cc 100%);
+            position: relative;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 60px;
+            background: linear-gradient(180deg, transparent, #fff8f5);
+        }
+
+        .hero-deco {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero-sub {
+            font-size: 1rem;
+            color: #e8a892;
+            letter-spacing: 4px;
+            margin-bottom: 0.6rem;
+            font-weight: 400;
+        }
+        .hero-date {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #c4725a;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+        .hero-hint {
+            font-size: 0.9rem;
+            color: #d9a090;
+            margin-top: 0.3rem;
+            letter-spacing: 2px;
+        }
+        .hero-arrow {
+            margin-top: 2.5rem;
+            font-size: 1.8rem;
+            color: #e8a892;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-12px); }
+            60% { transform: translateY(-6px); }
+        }
+
+        /* ===== 时间轴 ===== */
+        .timeline-section {
+            padding: 3rem 1.5rem 2rem;
+            max-width: 520px;
+            margin: 0 auto;
+            background: #fff8f5;
+            position: relative;
+        }
+        .timeline-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #c4725a;
+            margin-bottom: 2.5rem;
+            letter-spacing: 2px;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2.5px;
+            background: linear-gradient(180deg, #ffd9cc, #f5b8a5, #e8a892);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+            padding-left: 1.2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.7rem;
+            top: 6px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #f5b8a5;
+            border: 2.5px solid #fff8f5;
+            box-shadow: 0 0 0 2.5px #f5b8a5;
+        }
+        .timeline-item:nth-child(odd)::before {
+            background: #e8a892;
+            box-shadow: 0 0 0 2.5px #e8a892;
+        }
+        .timeline-day {
+            font-size: 0.8rem;
+            color: #e8a892;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+        .timeline-text {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #4a3728;
+        }
+
+        /* ===== 告白信展示区 ===== */
+        .letter-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: #fff8f5;
+            position: relative;
+        }
+        .letter-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 40px;
+            background: linear-gradient(180deg, #fff8f5, transparent);
+        }
+
+        .letter-prompt {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #c4725a;
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+        }
+        .letter-prompt-small {
+            font-size: 0.95rem;
+            color: #d9a090;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-letter {
+            display: inline-block;
+            padding: 1rem 2.8rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #f5b8a5, #e8a892);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(232, 168, 146, 0.35);
+            letter-spacing: 3px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .btn-letter:hover {
+            transform: scale(1.06);
+            box-shadow: 0 6px 25px rgba(232, 168, 146, 0.45);
+        }
+        .btn-letter:active {
+            transform: scale(0.97);
+        }
+        .btn-letter.hidden {
+            display: none;
+        }
+
+        /* 告白信卡片 */
+        .letter-card {
+            display: none;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 40px rgba(196, 114, 90, 0.15);
+            opacity: 0;
+            transform: scale(0.92) translateY(20px);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .letter-card.show {
+            display: block;
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .letter-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+            display: block;
+        }
+
+        .letter-card-foot {
+            margin-top: 1.2rem;
+            font-size: 0.9rem;
+            color: #d9a090;
+            letter-spacing: 1px;
+        }
+
+        /* ===== 看完信后的回应区 ===== */
+        .response-section {
+            display: none;
+            margin-top: 2rem;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .response-section.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .response-text {
+            font-size: 1.1rem;
+            color: #4a3728;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        .response-text .highlight {
+            color: #c4725a;
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-yes {
+            display: inline-block;
+            padding: 1rem 3rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #f5b8a5, #e8a892);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(232, 168, 146, 0.35);
+            letter-spacing: 4px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            animation: pulse-btn 2s ease-in-out infinite;
+        }
+        @keyframes pulse-btn {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 20px rgba(232, 168, 146, 0.35); }
+            50% { transform: scale(1.04); box-shadow: 0 6px 28px rgba(232, 168, 146, 0.5); }
+        }
+        .btn-yes:hover {
+            transform: scale(1.06);
+            box-shadow: 0 6px 25px rgba(232, 168, 146, 0.45);
+        }
+        .btn-yes:active {
+            transform: scale(0.98);
+        }
+        .btn-yes.clicked {
+            background: linear-gradient(135deg, #f5d0c0, #e8b8a8);
+            animation: none;
+            box-shadow: 0 0 30px rgba(232, 168, 146, 0.5);
+        }
+
+        .btn-maybe {
+            display: inline-block;
+            padding: 0.7rem 2rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #d9a090;
+            background: transparent;
+            border: 2px solid #f0cdc0;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            letter-spacing: 2px;
+        }
+        .btn-maybe:hover {
+            background: #fff0ea;
+            border-color: #e8a892;
+        }
+
+        .btn-maybe-pressed {
+            margin-top: 0.8rem;
+            font-size: 0.95rem;
+            color: #d9a090;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .btn-maybe-pressed.show {
+            opacity: 1;
+        }
+
+        .result-message {
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            color: #c4725a;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            font-weight: 600;
+        }
+        .result-message.show {
+            opacity: 1;
+        }
+        .result-message .big {
+            font-size: 1.6rem;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== 纸屑 Canvas ===== */
+        #confetti-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* ===== 飘落的爱心装饰 ===== */
+        .hearts-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .heart {
+            position: absolute;
+            top: -30px;
+            color: rgba(232, 168, 146, 0.2);
+            font-size: 1.2rem;
+            animation: heartFall linear infinite;
+        }
+        @keyframes heartFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 400px) {
+            .hero-date { font-size: 1.6rem; }
+            .letter-prompt { font-size: 1.2rem; }
+            .btn-letter, .btn-yes { padding: 0.8rem 2.2rem; font-size: 1.2rem; }
+            .timeline-section { padding: 2rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 飘落的爱心装饰 -->
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <!-- ===== 首页 ===== -->
+    <section class="hero">
+        <div class="hero-deco">✧</div>
+        <div class="hero-sub">从相遇 到 心动</div>
+        <div class="hero-date">5月30日 → 6月30日</div>
+        <div class="hero-hint">一个关于勇气和喜欢的故事</div>
+        <div class="hero-arrow">⌄</div>
+    </section>
+
+    <!-- ===== 时间轴 ===== -->
+    <section class="timeline-section">
+        <div class="timeline-title">这31天</div>
+        <div class="timeline" id="timeline">
+            <div class="timeline-item">
+                <div class="timeline-day">第 0 天 · 5月30日</div>
+                <div class="timeline-text">傍晚在操场看见你，让朋友去要了微信。那是我人生第一次鼓起勇气认识一个女生。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 1 天</div>
+                <div class="timeline-text">加上了微信第二天，我就不自觉的想给你发消息。你耐心的回复，给了我好大的力量，我盯着屏幕笑了很久。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 2 天</div>
+                <div class="timeline-text">收到了你送的小蛋糕，还是你亲自送到我寝室楼下，我真的很惊喜也很开心。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 3 天</div>
+                <div class="timeline-text">我想了很多前一天晚上你和我聊的事情，晚上我想清楚了，也真心告诉了你我的感受。你真诚的回复也让我很开心。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 6 天</div>
+                <div class="timeline-text">发现你笑起来嘴巴旁边有一个可爱的酒窝，小沙同学真的好可爱。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 9 天</div>
+                <div class="timeline-text">开始习惯生活里有你。每天最期待的事，就是能够和你见面。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 14 天</div>
+                <div class="timeline-text">和你散步的时候，我第一次觉得——"嗯，这个人真的就是我心里的那样好的人。"</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 16 天</div>
+                <div class="timeline-text">这么多天相处，你和我聊了很多，关于你、关于生活、关于未来。我一边听一边想：这个女孩真的很好。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 19 天</div>
+                <div class="timeline-text">我们一起去图书馆学习，小沙同学怕我太想你，送给我一个可爱小熊💓</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 20 天</div>
+                <div class="timeline-text">早上一起床就看见你给我准备的粽子，今天是端午节呢，哈哈，真的感觉小沙同学对我很关心。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 21 天</div>
+                <div class="timeline-text">和你在一起的时候总是很舒服，不用刻意找话题，不用伪装什么。就是安心。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 25 天</div>
+                <div class="timeline-text">我确定了一件事——我喜欢你。不是一见钟情的冲动，而是一天比一天更确定的心动。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 28 天</div>
+                <div class="timeline-text">我开始偷偷准备一件事。想要在这31天的时候，认真告诉你我的心意。</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-day">第 31 天 · 今天</div>
+                <div class="timeline-text">我想把以后的每一天，都留给你；也想你以后的每一天，都陪着我。</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 告白信展示区 ===== -->
+    <section class="letter-section" id="letterSection">
+        <div class="letter-prompt" id="letterPrompt">
+            🩷 我有话想对你说 🩷
+        </div>
+        <div class="letter-prompt-small">
+            我写了一封手写信，你愿意看看吗？
+        </div>
+
+        <button class="btn-letter" id="btnShowLetter">
+            嗯，我看！
+        </button>
+
+        <!-- 告白信卡片 -->
+        <div class="letter-card" id="letterCard">
+            <img src="告白信.png" alt="告白信" />
+            <div class="letter-card-foot">
+                ✦ 一字一句，都是真心 ✦
+            </div>
+        </div>
+
+        <!-- 看完信后的回应 -->
+        <div class="response-section" id="responseSection">
+            <div class="response-text">
+                好啦，信你也看完啦～<br />
+                我的心意，你都知道了 💌<br /><br />
+                所以……可爱的小沙同学，<br />
+                <span class="highlight">你愿意做我的女朋友吗？</span>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-yes" id="btnYes">好！我愿意 ❤️</button>
+                <button class="btn-maybe" id="btnMaybe">唔… 让我想想</button>
+            </div>
+
+            <div class="btn-maybe-pressed" id="btnMaybePressed">
+                🩷 没关系，我会一直等你的～ 反正我的心意就在这里，不会跑掉！ 🩷
+            </div>
+
+            <div class="result-message" id="resultMessage">
+                <span class="big">耶！！！我们在一起啦 💕</span>
+            </div>
+        </div>
+    </section>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <script>
+        // ===== EmailJS 配置（若 CDN 加载失败不影响页面其他功能）=====
+        let sendNotifyEmail = function() {
+            console.log('⏳ EmailJS 未就绪，跳过邮件通知');
+        };
+
+        try {
+            if (typeof emailjs !== 'undefined') {
+                emailjs.init('oIfzrsZsNxcUuzWHc');
+
+                const SERVICE_ID = 'service_tf9rmmr';
+                const TEMPLATE_ID = 'template_nt4630o';
+                const MY_EMAIL = '1730444948@qq.com';
+
+                sendNotifyEmail = function() {
+                    emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+                        to_email: MY_EMAIL,
+                        from_name: '小沙同学',
+                        message: '她刚刚点击了「好！我愿意」❤️ 快去确认吧！',
+                        date: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
+                    }).then(() => {
+                        console.log('✅ 通知邮件已发送');
+                    }).catch((err) => {
+                        console.error('❌ 邮件发送失败:', err);
+                    });
+                };
+            } else {
+                console.warn('⚠️ EmailJS 脚本未加载');
+            }
+        } catch(e) {
+            console.warn('⚠️ EmailJS 初始化失败，不影响页面功能:', e);
+        }
+
+        // ===== 飘落的爱心 =====
+        (function createHearts() {
+            const container = document.getElementById('heartsContainer');
+            const symbols = ['♥', '♡', '✧', '✦', '·'];
+            for (let i = 0; i < 25; i++) {
+                const el = document.createElement('div');
+                el.className = 'heart';
+                el.textContent = symbols[i % symbols.length];
+                el.style.left = Math.random() * 100 + '%';
+                el.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
+                el.style.animationDuration = (8 + Math.random() * 12) + 's';
+                el.style.animationDelay = (Math.random() * 15) + 's';
+                container.appendChild(el);
+            }
+        })();
+
+        // ===== 时间轴滚动动画 =====
+        const items = document.querySelectorAll('.timeline-item');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+        items.forEach(item => observer.observe(item));
+
+        // ===== 告白信交互 =====
+        const btnLetter = document.getElementById('btnShowLetter');
+        const letterCard = document.getElementById('letterCard');
+        const letterPrompt = document.getElementById('letterPrompt');
+        const responseSection = document.getElementById('responseSection');
+
+        btnLetter.addEventListener('click', () => {
+            // 隐藏按钮
+            btnLetter.classList.add('hidden');
+            // 显示告白信卡片（带弹入动画）
+            letterCard.classList.add('show');
+            // 更新上方文字
+            letterPrompt.textContent = '🩷 这封信，写给你 🩷';
+
+            // 4秒后（足够看完信）显示回应区
+            setTimeout(() => {
+                responseSection.classList.add('show');
+                // 滚动到回应区
+                responseSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 2500);
+        });
+
+        // ===== "让我想想" 按钮 =====
+        const btnMaybe = document.getElementById('btnMaybe');
+        const btnMaybePressed = document.getElementById('btnMaybePressed');
+
+        let maybeCount = 0;
+        const maybeMessages = [
+            '🩷 没关系，我会一直等你的～ 反正我的心意就在这里，不会跑掉！ 🩷',
+            '🥺 呜呜… 好趴，那你慢慢想，我不催你～ 但你一定要看完信哦！',
+            '💪 没事！我有的是耐心！反正我已经认定是你啦 ✨',
+            '🌸 你看窗外，风很温柔，我等你。多久都等。',
+            '😳 你每多想一秒，我就多喜欢你一秒…… 你看着办吧！',
+        ];
+
+        btnMaybe.addEventListener('click', () => {
+            maybeCount = Math.min(maybeCount + 1, maybeMessages.length - 1);
+            btnMaybePressed.textContent = maybeMessages[maybeCount];
+            btnMaybePressed.classList.add('show');
+
+            // 稍微晃一下"好"按钮
+            const btnYes = document.getElementById('btnYes');
+            btnYes.style.animation = 'none';
+            btnYes.offsetHeight; // reflow
+            btnYes.style.animation = 'pulse-btn 2s ease-in-out infinite';
+        });
+
+        // ===== "好" 按钮 + 纸屑动画 =====
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let animating = false;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const COLORS = [
+            '#f5b8a5', '#e8a892', '#ffd9cc', '#fce4d8',
+            '#ffc8b8', '#f0cdc0', '#d9a090', '#ffe8e0',
+            '#ffb0a0', '#ffd0c8'
+        ];
+
+        function randomBetween(a, b) {
+            return a + Math.random() * (b - a);
+        }
+
+        class Confetto {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                const w = canvas.width;
+                this.x = randomBetween(0, w);
+                this.y = randomBetween(-canvas.height * 0.2, -20);
+                this.size = randomBetween(6, 14);
+                this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+                this.rotation = randomBetween(0, Math.PI * 2);
+                this.rotSpeed = randomBetween(-0.05, 0.05);
+                this.speedY = randomBetween(2, 5);
+                this.speedX = randomBetween(-1.5, 1.5);
+                this.swing = randomBetween(0, Math.PI * 2);
+                this.swingSpeed = randomBetween(0.01, 0.03);
+                this.swingAmp = randomBetween(0.5, 2);
+                this.opacity = 1;
+                // 有些纸屑是心形 ❤
+                this.isHeart = Math.random() < 0.2;
+            }
+            update() {
+                this.swing += this.swingSpeed;
+                this.x += this.speedX + Math.sin(this.swing) * this.swingAmp;
+                this.y += this.speedY;
+                this.rotation += this.rotSpeed;
+                if (this.y > canvas.height + 20) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                if (this.isHeart) {
+                    // 画小爱心
+                    ctx.font = (this.size + 4) + 'px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('♥', 0, 0);
+                } else {
+                    ctx.fillRect(-this.size / 2, -this.size / 4, this.size, this.size / 2);
+                }
+                ctx.restore();
+            }
+        }
+
+        const particles = [];
+        const PARTICLE_COUNT = 150;
+
+        function startConfetti() {
+            if (animating) return;
+            animating = true;
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const p = new Confetto();
+                particles.push(p);
+            }
+            animate();
+        }
+
+        function animate() {
+            if (!animating) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (const p of particles) {
+                p.update();
+                p.draw();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function stopConfettiAfter(ms) {
+            setTimeout(() => {
+                animating = false;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, ms);
+        }
+
+        // ===== "好"按钮点击 =====
+        const btnYes = document.getElementById('btnYes');
+        const msg = document.getElementById('resultMessage');
+
+        btnYes.addEventListener('click', () => {
+            btnYes.classList.add('clicked');
+            btnYes.textContent = '💕';
+            msg.classList.add('show');
+            startConfetti();
+            stopConfettiAfter(6000);
+            // 发送通知邮件
+            sendNotifyEmail();
+
+            // 隐藏"让我想想"按钮和回应
+            btnMaybe.style.display = 'none';
+            btnMaybePressed.style.display = 'none';
+
+            // 更新提示文字
+            document.querySelector('.response-text').innerHTML =
+                '🤩 太好啦！！！<br />' +
+                '<span style="font-size:1.8rem;display:block;margin-top:0.8rem;">💕 我们在一起啦 💕</span>';
+        });
+    </script>
+</body>
+</html>
